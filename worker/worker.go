@@ -5,7 +5,10 @@ import (
 	"regexp"
 )
 
-func Worker(inputData map[string]interface{}) *model.OuputData {
+func Worker(input chan map[string]interface{}, output chan *model.OuputData) {
+	defer close(output)
+	inputData := <-input
+	// Convert the input data to the desired output structure
 	outputData := &model.OuputData{
 		Event:            inputData["ev"].(string),
 		Event_Type:       inputData["et"].(string),
@@ -38,5 +41,6 @@ func Worker(inputData map[string]interface{}) *model.OuputData {
 			}
 		}
 	}
-	return outputData
+
+	output <- outputData
 }
